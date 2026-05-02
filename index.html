@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Global Energy Data API</title>
+  <title>Global Energy API</title>
 </head>
 <body>
-  <h1>Global Energy Data API</h1>
-  <p>Version 1.0</p>
 
-  <h2>Endpoints</h2>
-  <ul>
-    <li>/api/v1/primary/energy/fossil_fuel.csv</li>
-    <li>/api/v1/secondary/solar/solar_generation.csv</li>
-    <li>/metadata/index.json</li>
-  </ul>
+<h1>Global Energy Data API</h1>
+<ul id="list"></ul>
+
+<script>
+fetch("metadata/index.json")
+  .then(res => res.json())
+  .then(data => {
+    const list = document.getElementById("list");
+
+    data.datasets.forEach(ds => {
+      const li = document.createElement("li");
+
+      const url = data.base_urls.primary + ds.path;
+
+      li.innerHTML = `<a href="${url}" target="_blank">${ds.name}</a>`;
+      list.appendChild(li);
+    });
+  });
+</script>
+
 </body>
 </html>
