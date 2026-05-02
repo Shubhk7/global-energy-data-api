@@ -1,29 +1,460 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Global Energy API</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Energy Data API | Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border: #334155;
+            --success: #22c55e;
+            --error: #ef4444;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .light-mode {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --accent: #0284c7;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 2rem 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .light-mode header {
+            background: rgba(241, 245, 249, 0.8);
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        #search-bar {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            width: 250px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        #search-bar:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: var(--border);
+            width: 50px;
+            height: 26px;
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+        }
+
+        .theme-toggle::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            position: absolute;
+            transition: var(--transition);
+            left: 4px;
+        }
+
+        .light-mode .theme-toggle::after {
+            left: 28px;
+        }
+
+        main {
+            padding: 2rem 10%;
+            flex-grow: 1;
+        }
+
+        .group-section {
+            margin-bottom: 3rem;
+        }
+
+        .group-header {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .group-header::after {
+            content: '';
+            height: 1px;
+            background: var(--border);
+            flex-grow: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card .meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .card .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--border);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-top: 1rem;
+            color: var(--accent);
+        }
+
+        /* Modal / Visualizer */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 900px;
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            border: 1px solid var(--border);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        /* Spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-left-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #error-msg {
+            color: var(--error);
+            text-align: center;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        footer {
+            padding: 2rem 10%;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 1rem; }
+            #search-bar { width: 100%; }
+        }
+    </style>
 </head>
 <body>
 
-<h1>Global Energy Data API</h1>
-<ul id="list"></ul>
+    <header>
+        <div class="logo">
+            <h1>Global Energy Data API</h1>
+        </div>
+        <div class="controls">
+            <input type="text" id="search-bar" placeholder="Search datasets...">
+            <div class="theme-toggle" id="theme-toggle"></div>
+        </div>
+    </header>
 
-<script>
-fetch("metadata/index.json")
-  .then(res => res.json())
-  .then(data => {
-    const list = document.getElementById("list");
+    <main id="main-content">
+        <div id="loading-main" class="spinner" style="display: block;"></div>
+        <div id="error-msg">Failed to load API metadata.</div>
+        <div id="dataset-container"></div>
+    </main>
 
-    data.datasets.forEach(ds => {
-      const li = document.createElement("li");
+    <div class="modal" id="chart-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2 id="chart-title" style="margin-bottom: 1.5rem;"></h2>
+            <div id="modal-loading" class="spinner"></div>
+            <canvas id="energyChart"></canvas>
+        </div>
+    </div>
 
-      const url = data.base_urls.primary + ds.path;
+    <footer>
+        <p>Data Sources: OWID (CC BY 4.0), Energy Institute SRWE</p>
+    </footer>
 
-      li.innerHTML = `<a href="${url}" target="_blank">${ds.name}</a>`;
-      list.appendChild(li);
-    });
-  });
-</script>
+    <script>
+        const container = document.getElementById('dataset-container');
+        const searchBar = document.getElementById('search-bar');
+        const themeToggle = document.getElementById('theme-toggle');
+        const modal = document.getElementById('chart-modal');
+        const closeModal = document.getElementById('close-modal');
+        const loadingMain = document.getElementById('loading-main');
+        const errorMsg = document.getElementById('error-msg');
+        
+        let apiData = null;
+        let chartInstance = null;
 
+        // Initialize Dark Mode
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+        });
+
+        // Fetch Metadata
+        async function init() {
+            try {
+                const response = await fetch('/metadata/index.json');
+                if (!response.ok) throw new Error();
+                apiData = await response.json();
+                renderDatasets(apiData.datasets);
+            } catch (err) {
+                loadingMain.style.display = 'none';
+                errorMsg.style.display = 'block';
+                console.error("API Init Error:", err);
+            }
+        }
+
+        function renderDatasets(datasets) {
+            loadingMain.style.display = 'none';
+            container.innerHTML = '';
+            
+            const groups = [...new Set(datasets.map(d => d.group))];
+            
+            groups.forEach(group => {
+                const groupDatasets = datasets.filter(d => d.group === group);
+                if (groupDatasets.length === 0) return;
+
+                const section = document.createElement('div');
+                section.className = 'group-section';
+                section.innerHTML = `
+                    <h2 class="group-header">${group}</h2>
+                    <div class="grid"></div>
+                `;
+                
+                const grid = section.querySelector('.grid');
+                groupDatasets.forEach(ds => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <h3>${ds.name}</h3>
+                        <p class="meta">Source: ${ds.source}</p>
+                        <span class="badge">${ds.category}</span>
+                    `;
+                    card.onclick = () => loadDataset(ds);
+                    grid.appendChild(card);
+                });
+                
+                container.appendChild(section);
+            });
+        }
+
+        // Search logic
+        searchBar.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = apiData.datasets.filter(ds => 
+                ds.name.toLowerCase().includes(query) || 
+                ds.group.toLowerCase().includes(query)
+            );
+            renderDatasets(filtered);
+        });
+
+        async function loadDataset(dataset) {
+            modal.style.display = 'flex';
+            document.getElementById('chart-title').innerText = dataset.name;
+            document.getElementById('modal-loading').style.display = 'block';
+            if(chartInstance) chartInstance.destroy();
+
+            const primaryUrl = apiData.base_urls.primary + dataset.path;
+            const fallbackUrl = apiData.base_urls.fallback + dataset.path;
+
+            try {
+                let response = await fetch(primaryUrl);
+                if (!response.ok) response = await fetch(fallbackUrl);
+                if (!response.ok) throw new Error("File not found");
+
+                const csvText = await response.text();
+                processCSV(csvText, dataset.name);
+            } catch (err) {
+                alert("Error loading CSV data: " + err.message);
+                modal.style.display = 'none';
+            } finally {
+                document.getElementById('modal-loading').style.display = 'none';
+            }
+        }
+
+        function processCSV(csv, title) {
+            const rows = csv.split('\n').filter(r => r.trim() !== '').slice(1, 31); // Limit 30 rows
+            const labels = [];
+            const values = [];
+
+            rows.forEach(row => {
+                const cols = row.split(',');
+                if(cols.length >= 2) {
+                    labels.push(cols[0].replace(/"/g, ''));
+                    values.push(parseFloat(cols[1]));
+                }
+            });
+
+            renderChart(labels, values, title);
+        }
+
+        function renderChart(labels, values, title) {
+            const ctx = document.getElementById('energyChart').getContext('2d');
+            const isDark = !document.body.classList.contains('light-mode');
+            
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: values,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#38bdf8'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: isDark ? '#334155' : '#e2e8f0' },
+                            ticks: { color: isDark ? '#94a3b8' : '#64748b' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: isDark ? '#94a3b8' : '#64748b' }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        closeModal.onclick = () => modal.style.display = 'none';
+        window.onclick = (e) => { if(e.target == modal) modal.style.display = 'none'; };
+
+        init();
+    </script>
 </body>
 </html>
