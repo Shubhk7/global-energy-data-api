@@ -192,7 +192,6 @@
             color: var(--accent);
         }
 
-        /* Modal / Visualizer */
         .modal {
             display: none;
             position: fixed;
@@ -226,7 +225,6 @@
             color: var(--text-secondary);
         }
 
-        /* Spinner */
         .spinner {
             display: none;
             width: 40px;
@@ -277,7 +275,7 @@
 
     <main id="main-content">
         <div id="loading-main" class="spinner" style="display: block;"></div>
-        <div id="error-msg">Failed to load API metadata.</div>
+        <div id="error-msg">Failed to load API metadata. Check repository path structure.</div>
         <div id="dataset-container"></div>
     </main>
 
@@ -306,22 +304,21 @@
         let apiData = null;
         let chartInstance = null;
 
-        // Initialize Dark Mode
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
         });
 
-        // Fetch Metadata
+        // FIXED: Using relative path 'metadata/index.json' to support GitHub Pages subfolders
         async function init() {
             try {
-                const response = await fetch('/metadata/index.json');
-                if (!response.ok) throw new Error();
+                const response = await fetch('metadata/index.json');
+                if (!response.ok) throw new Error("Metadata not found");
                 apiData = await response.json();
                 renderDatasets(apiData.datasets);
             } catch (err) {
                 loadingMain.style.display = 'none';
                 errorMsg.style.display = 'block';
-                console.error("API Init Error:", err);
+                console.error("Path Error Detected:", err);
             }
         }
 
@@ -359,7 +356,6 @@
             });
         }
 
-        // Search logic
         searchBar.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
             const filtered = apiData.datasets.filter(ds => 
@@ -394,7 +390,7 @@
         }
 
         function processCSV(csv, title) {
-            const rows = csv.split('\n').filter(r => r.trim() !== '').slice(1, 31); // Limit 30 rows
+            const rows = csv.split('\n').filter(r => r.trim() !== '').slice(1, 31);
             const labels = [];
             const values = [];
 
@@ -444,8 +440,8 @@
                         }
                     },
                     animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
+                        duration: 800,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
