@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-05-02",
+
+  "base_urls": {
+    "primary": "https://yourusername.github.io/global-energy-data-api/",
+    "fallback": "https://raw.githubusercontent.com/yourusername/global-energy-data-api/main/"
+  },
+
+  "datasets": [
+    {
+      "id": "fossil_fuel",
+      "name": "Fossil Fuel Consumption",
+      "category": "primary",
+      "path": "api/v1/primary/energy/fossil_fuel.csv"
+    },
+    {
+      "id": "electricity_mix_global",
+      "name": "Electricity Mix (Global)",
+      "category": "primary",
+      "path": "api/v1/primary/electricity/electricity_mix_global.csv"
+    },
+    {
+      "id": "electricity_mix_srwe",
+      "name": "Electricity Mix (SRWE)",
+      "category": "secondary",
+      "path": "api/v1/secondary/electricity/electricity_mix_srwe.csv"
+    },
+    {
+      "id": "solar_generation",
+      "name": "Solar Generation",
+      "category": "secondary",
+      "path": "api/v1/secondary/solar/solar_generation.csv"
+    }
+  ]
+}
