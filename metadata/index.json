@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "last_updated": "2026-05-02",
+  "version": "2.0",
+  "last_updated": "2026-05-03",
 
   "base_urls": {
     "primary": "https://shubhk7.github.io/global-energy-data-api/",
@@ -8,142 +8,262 @@
   },
 
   "datasets": [
-    {
-      "id": "electricity_mix_global",
-      "name": "Electricity Mix (Global)",
-      "category": "primary",
-      "group": "electricity",
-      "path": "api/v1/primary/electricity/electricity_mix_global.csv",
-      "source": "OWID"
-    },
-    {
-      "id": "emissions_global",
-      "name": "Global Emissions",
-      "category": "primary",
-      "group": "emissions",
-      "path": "api/v1/primary/emissions/emissions_global.csv",
-      "source": "OWID"
-    },
+
     {
       "id": "energy_by_source",
       "name": "Energy by Source",
       "category": "primary",
       "group": "energy",
       "path": "api/v1/primary/energy/energy_by_source.csv",
-      "source": "OWID"
+      "source": "OWID",
+
+      "meta": {
+        "description": "Breakdown of energy consumption by source over time",
+        "columns": {
+          "country": "Country name",
+          "year": "Year",
+          "coal": "Energy from coal (TWh)",
+          "gas": "Energy from natural gas (TWh)",
+          "oil": "Energy from oil (TWh)",
+          "renewables": "Renewable energy (TWh)"
+        },
+        "units": "TWh",
+        "time_range": { "start": 1965, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "stacked_area",
+        "x_axis": "year",
+        "y_axis": "energy",
+        "stacked": true
+      }
     },
+
     {
-      "id": "fossil_fuel",
-      "name": "Fossil Fuel Consumption",
+      "id": "emissions_global",
+      "name": "Global Emissions",
       "category": "primary",
-      "group": "energy",
-      "path": "api/v1/primary/energy/fossil_fuel.csv",
-      "source": "OWID"
+      "group": "emissions",
+      "path": "api/v1/primary/emissions/emissions_global.csv",
+      "source": "OWID",
+
+      "meta": {
+        "description": "Global CO2 emissions over time",
+        "columns": {
+          "country": "Country name",
+          "year": "Year",
+          "co2": "Carbon dioxide emissions (million tonnes)"
+        },
+        "units": "Million Tonnes CO2",
+        "time_range": { "start": 1900, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "line",
+        "x_axis": "year",
+        "y_axis": "co2"
+      }
     },
+
     {
-      "id": "nuclear_energy",
-      "name": "Nuclear Energy",
+      "id": "electricity_mix_global",
+      "name": "Electricity Mix (Global)",
       "category": "primary",
-      "group": "energy",
-      "path": "api/v1/primary/energy/nuclear_energy.csv",
-      "source": "OWID"
+      "group": "electricity",
+      "path": "api/v1/primary/electricity/electricity_mix_global.csv",
+      "source": "OWID",
+
+      "meta": {
+        "description": "Global electricity generation mix by source",
+        "columns": {
+          "country": "Country",
+          "year": "Year",
+          "coal": "Coal (%)",
+          "gas": "Gas (%)",
+          "hydro": "Hydropower (%)",
+          "solar": "Solar (%)",
+          "wind": "Wind (%)",
+          "nuclear": "Nuclear (%)"
+        },
+        "units": "Percentage (%)",
+        "time_range": { "start": 1985, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "stacked_bar",
+        "x_axis": "year",
+        "y_axis": "percentage",
+        "stacked": true
+      }
     },
+
     {
       "id": "per_capita_energy",
       "name": "Per Capita Energy",
       "category": "primary",
       "group": "per_capita",
       "path": "api/v1/primary/per_capita/per_capita_energy.csv",
-      "source": "OWID"
-    },
-    {
-      "id": "water_usage",
-      "name": "Water Usage",
-      "category": "primary",
-      "group": "water",
-      "path": "api/v1/primary/water/water_usage.csv",
-      "source": "OWID"
-    },
-    {
-      "id": "water_stress",
-      "name": "Water Stress",
-      "category": "primary",
-      "group": "water",
-      "path": "api/v1/primary/water/water_stress.csv",
-      "source": "OWID"
+      "source": "OWID",
+
+      "meta": {
+        "description": "Energy consumption per person",
+        "columns": {
+          "country": "Country",
+          "year": "Year",
+          "energy_per_capita": "Energy per capita (kWh)"
+        },
+        "units": "kWh per person",
+        "time_range": { "start": 1965, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "line",
+        "x_axis": "year",
+        "y_axis": "energy_per_capita"
+      }
     },
 
     {
-      "id": "electricity_mix_srwe",
-      "name": "Electricity Mix (SRWE)",
-      "category": "secondary",
-      "group": "electricity",
-      "path": "api/v1/secondary/electricity/electricity_mix_srwe.csv",
-      "source": "SRWE"
-    },
-    {
-      "id": "emissions_srwe",
-      "name": "Emissions (SRWE)",
-      "category": "secondary",
-      "group": "emissions",
-      "path": "api/v1/secondary/emissions/emissions_srwe.csv",
-      "source": "SRWE"
-    },
-    {
-      "id": "energy_by_type",
-      "name": "Energy by Type",
-      "category": "secondary",
+      "id": "fossil_fuel",
+      "name": "Fossil Fuel Consumption",
+      "category": "primary",
       "group": "energy",
-      "path": "api/v1/secondary/energy/energy_by_type.csv",
-      "source": "SRWE"
+      "path": "api/v1/primary/energy/fossil_fuel.csv",
+      "source": "OWID",
+
+      "meta": {
+        "description": "Consumption of fossil fuels over time",
+        "columns": {
+          "country": "Country",
+          "year": "Year",
+          "coal": "Coal",
+          "oil": "Oil",
+          "gas": "Gas"
+        },
+        "units": "TWh",
+        "time_range": { "start": 1965, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "stacked_area",
+        "x_axis": "year",
+        "y_axis": "energy",
+        "stacked": true
+      }
     },
+
     {
-      "id": "primary_energy",
-      "name": "Primary Energy",
-      "category": "secondary",
+      "id": "nuclear_energy",
+      "name": "Nuclear Energy",
+      "category": "primary",
       "group": "energy",
-      "path": "api/v1/secondary/energy/primary_energy.csv",
-      "source": "SRWE"
+      "path": "api/v1/primary/energy/nuclear_energy.csv",
+      "source": "OWID",
+
+      "meta": {
+        "description": "Nuclear energy production over time",
+        "columns": {
+          "country": "Country",
+          "year": "Year",
+          "nuclear": "Nuclear energy (TWh)"
+        },
+        "units": "TWh",
+        "time_range": { "start": 1970, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "line",
+        "x_axis": "year",
+        "y_axis": "nuclear"
+      }
     },
+
     {
       "id": "solar_generation",
       "name": "Solar Generation",
       "category": "secondary",
       "group": "solar",
       "path": "api/v1/secondary/solar/solar_generation.csv",
-      "source": "SRWE"
+      "source": "SRWE",
+
+      "meta": {
+        "description": "Solar energy generation trends",
+        "columns": {
+          "country": "Country",
+          "year": "Year",
+          "solar": "Solar generation (TWh)"
+        },
+        "units": "TWh",
+        "time_range": { "start": 2000, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "line",
+        "x_axis": "year",
+        "y_axis": "solar"
+      }
     },
-    {
-      "id": "solar_consumption",
-      "name": "Solar Consumption",
-      "category": "secondary",
-      "group": "solar",
-      "path": "api/v1/secondary/solar/solar_consumption.csv",
-      "source": "SRWE"
-    },
-    {
-      "id": "total_supply",
-      "name": "Total Energy Supply",
-      "category": "secondary",
-      "group": "supply",
-      "path": "api/v1/secondary/supply/total_supply.csv",
-      "source": "SRWE"
-    },
+
     {
       "id": "wind_generation",
       "name": "Wind Generation",
       "category": "secondary",
       "group": "wind",
       "path": "api/v1/secondary/wind/wind_generation.csv",
-      "source": "SRWE"
+      "source": "SRWE",
+
+      "meta": {
+        "description": "Wind energy generation trends",
+        "columns": {
+          "country": "Country",
+          "year": "Year",
+          "wind": "Wind generation (TWh)"
+        },
+        "units": "TWh",
+        "time_range": { "start": 2000, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "line",
+        "x_axis": "year",
+        "y_axis": "wind"
+      }
     },
+
     {
-      "id": "wind_consumption",
-      "name": "Wind Consumption",
+      "id": "total_supply",
+      "name": "Total Energy Supply",
       "category": "secondary",
-      "group": "wind",
-      "path": "api/v1/secondary/wind/wind_consumption.csv",
-      "source": "SRWE"
+      "group": "supply",
+      "path": "api/v1/secondary/supply/total_supply.csv",
+      "source": "SRWE",
+
+      "meta": {
+        "description": "Total energy supply across sources",
+        "columns": {
+          "country": "Country",
+          "year": "Year",
+          "total": "Total supply (TWh)"
+        },
+        "units": "TWh",
+        "time_range": { "start": 1965, "end": 2023 },
+        "update_frequency": "yearly"
+      },
+
+      "visualization": {
+        "default_chart": "line",
+        "x_axis": "year",
+        "y_axis": "total"
+      }
     }
+
   ]
 }
